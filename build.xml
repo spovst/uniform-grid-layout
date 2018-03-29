@@ -1,0 +1,121 @@
+<project name="UniformGridLayout" default="lib">
+
+    <property name="author" value="Sergey Povstyanov"/>
+    <property name="version" value="1.0"/>
+
+    <property name="src.dir" value="src"/>
+
+
+    <property name="build.dir" value="build"/>
+
+
+    <property name="license.dir" value="${basedir}"/>
+    <property name="license.file" value="LICENSE"/>
+
+
+    <property name="lib.build.dir" value="${build.dir}/lib"/>
+    <property name="lib.classes.dir" value="${lib.build.dir}/classes"/>
+    <property name="lib.jar.dir" value="${lib.build.dir}/jar"/>
+    <property name="lib.doc.dir" value="${lib.build.dir}/doc"/>
+
+    <property name="lib.sources" value="org/spovst/swing/layout/UniformGridLayout.java"/>
+
+    <property name="lib.jar.name" value="UniformGridLayout-${version}.jar"/>
+    <property name="lib.doc.jar.name" value="UniformGridLayout-${version}-doc.jar"/>
+
+    <path id="lib.classpath">
+        <pathelement path="${lib.jar.dir}/${lib.jar.name}"/>
+    </path>
+
+
+    <property name="demo.build.dir" value="${build.dir}/demo"/>
+    <property name="demo.classes.dir" value="${demo.build.dir}/classes"/>
+    <property name="demo.jar.dir" value="${demo.build.dir}/jar"/>
+
+    <property name="demo.sources" value="org/spovst/swing/demo/UniformGridLayoutDemo.java"/>
+
+    <property name="demo.jar.name" value="UniformGridLayoutDemo.jar"/>
+
+    <property name="demo.main-class" value="org.spovst.swing.demo.UniformGridLayoutDemo"/>
+
+
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+    </target>
+
+
+    <target name="all" depends="lib,demo"/>
+
+
+    <target name="run" depends="demo">
+        <java fork="true" classname="${demo.main-class}">
+            <classpath>
+                <path refid="lib.classpath"/>
+                <path location="${demo.jar.dir}/${demo.jar.name}"/>
+            </classpath>
+        </java>
+    </target>
+
+
+    <target name="lib-clean">
+        <delete dir="${lib.build.dir}"/>
+    </target>
+
+    <target name="lib-compile">
+        <mkdir dir="${lib.classes.dir}"/>
+        <javac includes="${lib.sources}" srcdir="${src.dir}" destdir="${lib.classes.dir}"/>
+    </target>
+
+    <target name="lib-jar" depends="lib-compile">
+        <mkdir dir="${lib.jar.dir}"/>
+        <jar destfile="${lib.jar.dir}/${lib.jar.name}" basedir="${lib.classes.dir}">
+            <metainf dir="${license.dir}" includes="${license.file}"/>
+        </jar>
+    </target>
+
+    <target name="lib-doc-compile">
+        <mkdir dir="${lib.doc.dir}"/>
+        <javadoc destdir="${lib.doc.dir}"
+                 use="true"
+                 author="${author}"
+                 version="${version}"
+                 windowtitle="${ant.project.name} API"
+                 doctitle="${ant.project.name}">
+            <fileset dir="${src.dir}" defaultexcludes="yes">
+                <include name="${lib.sources}"/>
+            </fileset>
+        </javadoc>
+    </target>
+
+    <target name="lib-doc-jar" depends="lib-doc-compile">
+        <mkdir dir="${lib.jar.dir}"/>
+        <jar destfile="${lib.jar.dir}/${lib.doc.jar.name}" basedir="${lib.doc.dir}"/>
+    </target>
+
+    <target name="lib-doc" depends="lib-doc-jar"/>
+
+    <target name="lib" depends="lib-jar,lib-doc"/>
+
+
+    <target name="demo-clean">
+        <delete dir="${demo.build.dir}"/>
+    </target>
+
+    <target name="demo-compile" depends="lib-jar">
+        <mkdir dir="${demo.classes.dir}"/>
+        <javac includes="${demo.sources}" srcdir="${src.dir}" destdir="${demo.classes.dir}" classpathref="lib.classpath"/>
+    </target>
+
+    <target name="demo-jar" depends="demo-compile">
+        <mkdir dir="${demo.jar.dir}"/>
+        <jar destfile="${demo.jar.dir}/${demo.jar.name}" basedir="${demo.classes.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="${demo.main-class}"/>
+            </manifest>
+            <metainf dir="${license.dir}" includes="${license.file}"/>
+        </jar>
+    </target>
+
+    <target name="demo" depends="demo-jar"/>
+
+</project>

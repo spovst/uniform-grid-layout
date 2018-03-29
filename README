@@ -1,0 +1,3 @@
+UniformGridLayout is Java Swing-compatible layout manager that dynamically calculates horizontal gap between components
+and laying out components in grid-like structure, where grid cell width is maximum of all components widths and grid
+cell height is maximum of all components heights. All components are placed at the center of their grid cell.
